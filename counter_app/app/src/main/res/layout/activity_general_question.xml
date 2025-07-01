@@ -61,7 +61,7 @@
             android:layout_margin="30dp">
 
             <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/fragment_container"
+                android:id="@+id/inquiry_fragment_container"
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="0dp"
                 android:layout_height="0dp"

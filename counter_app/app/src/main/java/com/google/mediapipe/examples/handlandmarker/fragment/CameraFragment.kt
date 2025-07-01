@@ -47,19 +47,35 @@ class CameraFragment : Fragment(), HandLandmarkerHelper.LandmarkerListener {
 
     private val allFrameVectors = mutableListOf<Float>()
 
+    fun getAllFrameVectors(): List<Float> {
+        return allFrameVectors.toList()
+    }
+
     override fun onResume() {
         super.onResume()
-        if (!PermissionsFragment.hasPermissions(requireContext())) {
-            Navigation.findNavController(
-                requireActivity(), R.id.fragment_container
-            ).navigate(R.id.action_camera_to_permissions)
+
+        val fragmentContainerId = when {
+            requireActivity().findViewById<View?>(R.id.order_fragment_container) != null -> R.id.order_fragment_container
+            requireActivity().findViewById<View?>(R.id.inquiry_fragment_container) != null -> R.id.inquiry_fragment_container
+            else -> null
         }
+
+        if (fragmentContainerId != null) {
+            if (!PermissionsFragment.hasPermissions(requireContext())) {
+                Navigation.findNavController(requireActivity(), fragmentContainerId)
+                    .navigate(R.id.action_camera_to_permissions)
+            }
+        } else {
+            Log.e("CameraFragment", "FragmentContainerView ID를 찾을 수 없습니다.")
+        }
+
         backgroundExecutor.execute {
             if (handLandmarkerHelper.isClose()) {
                 handLandmarkerHelper.setupHandLandmarker()
             }
         }
     }
+
 
     override fun onPause() {
         super.onPause()
