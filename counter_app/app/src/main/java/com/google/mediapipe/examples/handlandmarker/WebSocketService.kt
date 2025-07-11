@@ -81,11 +81,19 @@ object WebSocketService {
                         }
                         Log.d(TAG, "sign_urls 수신 완료:\n${signUrls.joinToString("\n")}")
                         onSignUrlsReceived?.invoke(signUrls)
-                    } else if (data.has("title") && data.has("num")) {
+                    }
+
+                    // 문의사항 알림용 (title=order & num 있을 경우)
+                    else if (data.has("title") && data.has("num")) {
                         val title = data.getString("title")
                         val num = data.getInt("num")
-                        println("수신: title=$title, num=$num")
-                        onSignOrderReceived?.invoke(num)
+
+                        if (title == "order") {
+                            Log.d(TAG, "문의사항 메시지 수신됨 (num=$num)")
+                            onSignOrderReceived?.invoke(num)
+                        } else {
+                            Log.d(TAG, "알 수 없는 title 수신됨: $title")
+                        }
                     }
                 }
 
