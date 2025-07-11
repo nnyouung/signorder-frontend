@@ -15,6 +15,7 @@
  */
 package com.google.mediapipe.examples.handlandmarker
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +34,14 @@ class QuestionActivity : AppCompatActivity() {
 
         backButton.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
+        }
+
+        // TODO: 화면 전환 테스트용으로 작성됨, gRC 로직 구현해야 함
+        // sendButton 클릭 시 LoadingActivity로 바로 이동
+        val sendButton = activityMainBinding.sendButton
+        sendButton.setOnClickListener {
+            val intent = Intent(this, LoadingActivity::class.java)
+            startActivity(intent)
         }
     }
 }
