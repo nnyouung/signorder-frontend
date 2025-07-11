@@ -17,10 +17,10 @@ object WebSocketService {
     private val storeCode = "5fjVwE8z"
     private val clientType = "counter_app"
 
-//     private val URL = "${BuildConfig.WS_URL}?store_code=$storeCode&client_type=$clientType&api-key=${BuildConfig.WS_API_KEY}"
+    private val URL = "${BuildConfig.WS_URL}?store_code=$storeCode&client_type=$clientType&api-key=${BuildConfig.WS_API_KEY}"
 
     // 테스트용 URL (로컬 서버 기준)
-    private val URL = "ws://10.0.2.2:8001/ws?store_code=$storeCode&client_type=$clientType&api-key=${BuildConfig.WS_API_KEY}"
+    // private val URL = "ws://10.0.2.2:8001/ws?store_code=$storeCode&client_type=$clientType&api-key=${BuildConfig.WS_API_KEY}"
 
     var isConnected = false
     var signUrls: List<String> = emptyList()
