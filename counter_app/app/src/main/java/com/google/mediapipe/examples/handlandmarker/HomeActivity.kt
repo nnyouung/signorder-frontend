@@ -56,6 +56,25 @@ class HomeActivity : AppCompatActivity() {
 
         signVideo.setup(videoUrls)
 
+        // 수어 영상이 오면 보여주기
+        WebSocketService.onSignUrlsReceived = {urls ->
+            runOnUiThread{
+                signVideo.setup(urls)
+            }
+        }
+
+        // '문의' num 오면 OX 화면으로 이동
+        WebSocketService.onSignOrderReceived = { number ->
+            runOnUiThread{
+                val intent = Intent(this, OxSelectionAnswerActivity::class.java)
+                intent.putExtra("inquiry_number", number)
+                startActivity(intent)
+            }
+        }
+
+        // WebSocket 연결
+        WebSocketService.connect()
+
         inquiryButton.setOnClickListener {
             val intent = Intent(this, QuestionActivity::class.java)
             startActivity(intent)
