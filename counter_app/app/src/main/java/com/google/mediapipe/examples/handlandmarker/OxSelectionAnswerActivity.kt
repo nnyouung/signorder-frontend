@@ -15,7 +15,10 @@ class OxSelectionAnswerActivity : AppCompatActivity() {
 
         val backButton = findViewById<ImageButton>(R.id.backButton)
         backButton.setOnClickListener{
-            onBackPressedDispatcher.onBackPressed()
+            val intent = Intent(this, HomeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(intent)
+            finish()
         }
 
         // To-do : OX 버튼 이동 흐름
@@ -28,10 +31,6 @@ class OxSelectionAnswerActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        noButton.setOnClickListener{
-            val intent = Intent(this, QuestionActivity::class.java)
-            finish()
-        }
     }
 
 }
