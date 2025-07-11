@@ -4,6 +4,9 @@ import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
+import android.util.Log
+
+private const val TAG = "WebSocketDebug"
 
 object WebSocketService {
     private var webSocket: WebSocket? = null
@@ -16,7 +19,7 @@ object WebSocketService {
 
 //     private val URL = "${BuildConfig.WS_URL}?store_code=$storeCode&client_type=$clientType&api-key=${BuildConfig.WS_API_KEY}"
 
-    // 로컬 서버 테스트
+    // 테스트용 URL (로컬 서버 기준)
     private val URL = "ws://10.0.2.2:8001/ws?store_code=$storeCode&client_type=$clientType&api-key=${BuildConfig.WS_API_KEY}"
 
     var isConnected = false
@@ -27,7 +30,7 @@ object WebSocketService {
     var onSignOrderReceived: ((Int) -> Unit)? = null  // num 값 기반 요청 대응용
 
     fun connect() {
-        println("WebSocket 연결 시도: $URL")
+        Log.d(TAG, "WebSocket 연결 시도: $URL")
 
         if (isConnected) return
 
@@ -35,23 +38,23 @@ object WebSocketService {
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(ws: WebSocket, response: Response) {
                 isConnected = true
-                println("WebSocket 연결됨")
+                Log.d(TAG, "WebSocket 연결 성공")
             }
 
             override fun onMessage(ws: WebSocket, text: String) {
-                println("메시지 수신: $text")
+                Log.d(TAG, "메시지 수신: $text")
                 handleMessage(text)
             }
 
             override fun onFailure(ws: WebSocket, t: Throwable, response: Response?) {
                 isConnected = false
-                println("WebSocket 오류: ${t.message}")
+                Log.e(TAG, "WebSocket 오류: ${t.message}", t)
                 t.printStackTrace()
             }
 
             override fun onClosing(ws: WebSocket, code: Int, reason: String) {
                 isConnected = false
-                println("WebSocket 종료: $reason")
+                Log.w(TAG, "WebSocket 종료: $reason")
             }
         })
     }
@@ -63,18 +66,20 @@ object WebSocketService {
 
     private fun handleMessage(message: String) {
         try {
+            Log.d(TAG, "handleMessage 실행됨")
             val json = JSONObject(message)
             val type = json.getString("type")
             val data = json.getJSONObject("data")
 
             when (type) {
                 "signMessage" -> {
+                    // 수어 응답용 (sign_urls 있을 경우)
                     if (data.has("sign_urls")) {
                         val urlsArray: JSONArray = data.getJSONArray("sign_urls")
                         signUrls = (0 until urlsArray.length()).map { i ->
                             urlsArray.getString(i)
                         }
-                        println("수어 영상 URLs: \n${signUrls.joinToString("\n")}")
+                        Log.d(TAG, "sign_urls 수신 완료:\n${signUrls.joinToString("\n")}")
                         onSignUrlsReceived?.invoke(signUrls)
                     } else if (data.has("title") && data.has("num")) {
                         val title = data.getString("title")
@@ -84,19 +89,12 @@ object WebSocketService {
                     }
                 }
 
-                "orderMessage" -> {
-                    val num = data.getInt("num")
-                    val msg = data.getString("message")
-                    val createdAt = data.getString("created_at")
-                    println("[주문 메시지] $num: $msg ($createdAt)")
-                }
-
                 else -> {
-                    println("알 수 없는 type: $type")
+                    Log.w(TAG, "처리되지 않은 type: $type")
                 }
             }
         } catch (e: Exception) {
-            println("메시지 파싱 실패: ${e.message}")
+            Log.e(TAG, "메시지 파싱 실패: ${e.message}", e)
         }
     }
 }
