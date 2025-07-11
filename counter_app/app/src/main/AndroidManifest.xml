@@ -24,9 +24,6 @@
             android:name=".AnswerActivity"
             android:exported="false" />
         <activity
-            android:name=".SignVideo"
-            android:exported="false" />
-        <activity
             android:name=".HomeActivity"
             android:exported="true">
             <intent-filter>

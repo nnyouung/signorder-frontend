@@ -19,6 +19,8 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -26,6 +28,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.google.mediapipe.examples.handlandmarker.R
+import kotlinx.coroutines.launch
 
 private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
 
@@ -69,13 +72,20 @@ class PermissionsFragment : Fragment() {
     }
 
     private fun navigateToCamera() {
-        lifecycleScope.launchWhenStarted {
-            Navigation.findNavController(
-                requireActivity(),
-                R.id.fragment_container
-            ).navigate(
-                R.id.action_permissions_to_camera
-            )
+        lifecycleScope.launch {
+            val containerId = when {
+                requireActivity().findViewById<View?>(R.id.order_fragment_container) != null ->
+                    R.id.order_fragment_container
+                requireActivity().findViewById<View?>(R.id.inquiry_fragment_container) != null ->
+                    R.id.inquiry_fragment_container
+                else -> {
+                    Log.e("PermissionsFragment", "FragmentContainerView를 찾을 수 없습니다.")
+                    return@launch
+                }
+            }
+
+            Navigation.findNavController(requireActivity(), containerId)
+                .navigate(R.id.action_permissions_to_camera)
         }
     }
 
