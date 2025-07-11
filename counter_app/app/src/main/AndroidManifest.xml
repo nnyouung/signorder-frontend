@@ -15,7 +15,8 @@
         android:supportsRtl="true"
         android:taskAffinity=""
         android:theme="@style/AppTheme"
-        tools:ignore="AllowBackup">
+        tools:ignore="AllowBackup"
+        android:networkSecurityConfig="@xml/network_security_config">
         <activity
             android:name=".LoadingActivity"
             android:exported="false" />
@@ -43,6 +44,10 @@
                 android:name="android.notch_support"
                 android:value="true" />
         </activity>
+        <activity
+            android:name=".OxSelectionAnswerActivity"
+            android:exported="false"
+            />
     </application>
 
 </manifest>
