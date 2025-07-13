@@ -26,8 +26,8 @@ object WebSocketService {
     var signUrls: List<String> = emptyList()
 
     // 외부에서 수신 반응 설정 가능
-    var onSignUrlsReceived: ((List<String>) -> Unit)? = null
-    var onSignOrderReceived: ((Int) -> Unit)? = null  // num 값 기반 요청 대응용
+    var onSignUrlsReceived: ((List<String>) -> Unit)? = null  // 수어 영상 수신용
+    var onSignOrderReceived: ((String, Int) -> Unit)? = null  // 문의사항 수신용
 
     fun connect() {
         Log.d(TAG, "WebSocket 연결 시도: $URL")
@@ -83,14 +83,14 @@ object WebSocketService {
                         onSignUrlsReceived?.invoke(signUrls)
                     }
 
-                    // 문의사항 알림용 (title=order & num 있을 경우)
+                    // 문의사항 알림용 (title == "order", "inquiryMessage" & num 있을 경우)
                     else if (data.has("title") && data.has("num")) {
                         val title = data.getString("title")
                         val num = data.getInt("num")
 
-                        if (title == "order") {
-                            Log.d(TAG, "문의사항 메시지 수신됨 (num=$num)")
-                            onSignOrderReceived?.invoke(num)
+                        if (title == "order" || title == "inquiryMessage") {
+                            Log.d(TAG, "문의사항 메시지 수신됨 (title=$title, num=$num)")
+                            onSignOrderReceived?.invoke(title,num)
                         } else {
                             Log.d(TAG, "알 수 없는 title 수신됨: $title")
                         }
