@@ -13,6 +13,7 @@ class OxSelectionAnswerActivity : AppCompatActivity() {
         // TODO : "문의사항 있으신가요?" 수어 아바타 영상 띄우기
 
         val inquiryNumber = intent.getIntExtra("inquiry_number", -1)
+        val layoutType = intent.getStringExtra("layoutType")
         println("전달받은 문의 번호: $inquiryNumber")
 
         val backButton = findViewById<ImageButton>(R.id.backButton)
@@ -30,10 +31,17 @@ class OxSelectionAnswerActivity : AppCompatActivity() {
 
         yesButton.setOnClickListener{
             val intent = Intent(this, QuestionActivity::class.java)
-            intent.putExtra("inquiry_number", inquiryNumber)
+            intent.putExtra("layoutType", layoutType)
+            intent.putExtra("num", inquiryNumber)
             startActivity(intent)
         }
 
+        noButton.setOnClickListener{
+            val intent = Intent(this, HomeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(intent)
+            finish()
+        }
     }
 
 }
