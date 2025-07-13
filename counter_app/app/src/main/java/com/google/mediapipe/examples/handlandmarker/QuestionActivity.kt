@@ -83,20 +83,17 @@ class QuestionActivity : AppCompatActivity() {
                         onLog = { message -> Log.d("GrpcLog", message) }
                     )
                     grpcClient.shutdown()
+
+                    // 전송 후 LoadingActivity로 이동
+                    val intent = Intent(this@QuestionActivity, LoadingActivity::class.java)
+                    startActivity(intent)
+
                 } else {
                     Log.w("QuestionActivity", "아직 누적된 데이터가 없습니다.")
                 }
             } else {
                 Log.e("QuestionActivity", "CameraFragment를 찾을 수 없습니다.")
             }
-        }
-
-        // TODO: 화면 전환 테스트용으로 작성됨, gRC 로직 구현해야 함
-        // sendButton 클릭 시 LoadingActivity로 바로 이동
-        val sendButton = activityMainBinding.sendButton
-        sendButton.setOnClickListener {
-            val intent = Intent(this, LoadingActivity::class.java)
-            startActivity(intent)
         }
     }
 }
