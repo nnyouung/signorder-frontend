@@ -1,6 +1,8 @@
 package com.google.mediapipe.examples.handlandmarker
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.FrameLayout
@@ -29,15 +31,19 @@ class SignVideo @JvmOverloads constructor(
         playerView.useController = false
         replayButton = ImageButton(context).apply{
             setImageResource(R.drawable.ic_replay)
-            background = null
-            layoutParams = LayoutParams(
-                300,300, Gravity.CENTER
-            )
+            background = ColorDrawable(Color.parseColor("#88000000"))
             visibility = INVISIBLE
         }
-
         addView(playerView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
         addView(replayButton)
+
+        playerView.post{
+            replayButton.layoutParams = LayoutParams(
+                playerView.width,
+                playerView.height,
+                Gravity.CENTER
+            )
+        }
     }
 
     fun setup(
