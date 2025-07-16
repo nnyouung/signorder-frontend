@@ -13,8 +13,6 @@ import com.example.grpc.GrpcClient
 import com.google.mediapipe.examples.handlandmarker.databinding.ActivityQuestionBinding
 import com.google.mediapipe.examples.handlandmarker.databinding.ActivityGeneralQuestionBinding
 import com.google.mediapipe.examples.handlandmarker.fragment.CameraFragment
-import kotlin.math.log
-
 
 class QuestionActivity : AppCompatActivity() {
     // TODO: 해당 액티비티로 들어갈 때 카운트다운 기능
@@ -86,7 +84,7 @@ class QuestionActivity : AppCompatActivity() {
                     handler.postDelayed(this, 1000)
                 } else {
                     countdownOverlay?.visibility = View.GONE
-                    onFinish() // 카운트다운 완료 후 콜백 실행
+                    onFinish() 
                 }
             }
         }
