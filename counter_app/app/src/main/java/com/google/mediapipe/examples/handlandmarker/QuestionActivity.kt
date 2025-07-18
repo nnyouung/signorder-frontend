@@ -16,7 +16,6 @@ import com.google.mediapipe.examples.handlandmarker.databinding.ActivityGeneralQ
 import com.google.mediapipe.examples.handlandmarker.fragment.CameraFragment
 
 class QuestionActivity : AppCompatActivity() {
-    // TODO: 해당 액티비티로 들어갈 때 카운트다운 기능
     private var countdownOverlay: FrameLayout? = null
     private var countdownText: android.widget.TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,6 +93,7 @@ class QuestionActivity : AppCompatActivity() {
     }
 
     private fun setupSendButton(sendButton: View, containerId: Int, inquiryType: String) {
+        val inquiryNumber = intent.getIntExtra("inquiry_number", -1)
         startCountdown{
             sendButton.setOnClickListener {
                 val navHostFragment =
@@ -115,7 +115,7 @@ class QuestionActivity : AppCompatActivity() {
                         grpcClient.sendAllFrameData(
                             frameData = frameData,
                             inquiryType = inquiryType,
-                            num = 123, // TODO: 웹소켓에서 주문번호 받아오면 수정하기
+                            num = inquiryNumber,
                             onLog = { message -> Log.d("GrpcLog", message) }
                         )
                         grpcClient.shutdown()
