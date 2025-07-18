@@ -58,7 +58,7 @@ class SignVideo @JvmOverloads constructor(
         playCurrent()
     }
 
-    fun setup(
+    fun setupWithUrls(
         videoUrls: List<String>,
         onCompleted: (() -> Unit)? = null
     ) {

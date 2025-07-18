@@ -26,6 +26,6 @@ class AnswerActivity : AppCompatActivity() {
         // println("받은 sign_urls: ${urls.joinToString("\n")}")
         signVideo = findViewById(R.id.signVideo)
 
-        signVideo.setup(urls)
+        signVideo.setupWithUrls(urls)
     }
 }
