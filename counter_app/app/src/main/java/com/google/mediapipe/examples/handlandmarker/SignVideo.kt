@@ -16,11 +16,10 @@ class SignVideo @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
-    // TODO: 영상 끝나면 재실행 버튼 기능
 
     private var player: ExoPlayer? = null
     private var playerView: PlayerView
-    private var srcList: List<String> = emptyList()
+    private var mediaItems: List<MediaItem> = emptyList()
     private var currentIndex = 0
     private var onCompleted: (() -> Unit)? = null
     private var replayButton: ImageButton
@@ -47,10 +46,25 @@ class SignVideo @JvmOverloads constructor(
     }
 
     fun setup(
+        videoResIds: List<Int>,
+        onCompleted: (() -> Unit)? = null
+    ) {
+        this.mediaItems = videoResIds.map {
+            MediaItem.fromUri("android.resource://${context.packageName}/$it")
+        }
+        this.onCompleted = onCompleted
+        currentIndex = 0
+
+        playCurrent()
+    }
+
+    fun setup(
         videoUrls: List<String>,
         onCompleted: (() -> Unit)? = null
     ) {
-        this.srcList = videoUrls
+        this.mediaItems = videoUrls.map { url ->
+            MediaItem.fromUri(url)
+        }
         this.onCompleted = onCompleted
         currentIndex = 0
 
@@ -60,16 +74,11 @@ class SignVideo @JvmOverloads constructor(
     private fun playCurrent() {
         releasePlayer()
 
-        val url = srcList.getOrNull(currentIndex)
-        if (url.isNullOrEmpty()) return
+        val currentItem = mediaItems.getOrNull(currentIndex) ?: return
 
         player = ExoPlayer.Builder(context).build().also { exoPlayer ->
             playerView.player = exoPlayer
-//            val mediaItem = MediaItem.fromUri(url)
-            val mediaItem = MediaItem.fromUri("android.resource://com.google.mediapipe.examples.handlandmarker/${R.raw.test_avatar_video}")
-            // 위 코드는 테스트용으로, 짧은 수어영상을 넣어 테스트했음.
-
-            exoPlayer.setMediaItem(mediaItem)
+            exoPlayer.setMediaItems(listOf(currentItem))
             exoPlayer.prepare()
             exoPlayer.playWhenReady = true
 
@@ -85,7 +94,7 @@ class SignVideo @JvmOverloads constructor(
 
     private fun onVideoEnded() {
         replayButton.visibility = VISIBLE // 비디오 재생 끝났을 때 재생버튼이 보이게
-        if (currentIndex < srcList.lastIndex) {
+        if (currentIndex < mediaItems.lastIndex) {
             replayButton.setOnClickListener {
                 replayButton.visibility = INVISIBLE // 다시재생 버튼 클릭 시 재생버튼 감추기
                 currentIndex++
