@@ -69,14 +69,27 @@ tasks.named("generateProto") {
     finalizedBy("removeGeneratedWkt")
 }
 
+// TODO : 확인 후 수정 필요
+//java {
+//    sourceCompatibility = JavaVersion.VERSION_1_8
+//    targetCompatibility = JavaVersion.VERSION_1_8
+//}
+//
+//tasks.named('jar') {
+//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//    exclude("**/*.proto")
+//    exclude("google/protobuf/**")
+//    exclude("com/google/protobuf/**")
+//}
+
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
-tasks.named('jar') {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    exclude("**/*.proto")
-    exclude("google/protobuf/**")
-    exclude("com/google/protobuf/**")
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
