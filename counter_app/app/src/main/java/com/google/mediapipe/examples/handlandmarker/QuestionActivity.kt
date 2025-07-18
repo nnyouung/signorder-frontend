@@ -1,5 +1,6 @@
 package com.google.mediapipe.examples.handlandmarker
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -82,6 +83,11 @@ class QuestionActivity : AppCompatActivity() {
                         onLog = { message -> Log.d("GrpcLog", message) }
                     )
                     grpcClient.shutdown()
+
+                    // 전송 후 LoadingActivity로 이동
+                    val intent = Intent(this@QuestionActivity, LoadingActivity::class.java)
+                    startActivity(intent)
+
                 } else {
                     Log.w("QuestionActivity", "아직 누적된 데이터가 없습니다.")
                 }
