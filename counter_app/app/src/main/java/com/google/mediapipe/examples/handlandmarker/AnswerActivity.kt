@@ -13,8 +13,7 @@ class AnswerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_answer)
 
-        val urls = intent.getStringArrayListExtra("sign_urls") ?: return
-
+        signVideo = findViewById(R.id.signVideo)
         val backButton = findViewById<ImageButton>(R.id.backButton)
         backButton.setOnClickListener{
             val intent = Intent(this, HomeActivity::class.java)
@@ -23,9 +22,20 @@ class AnswerActivity : AppCompatActivity() {
             finish()
         }
 
-        // println("받은 sign_urls: ${urls.joinToString("\n")}")
-        signVideo = findViewById(R.id.signVideo)
+        val urls = intent.getStringArrayListExtra("sign_urls")
+        val videoType = intent.getStringExtra("videoType")
 
-        signVideo.setupWithUrls(urls)
+        when {
+            urls != null -> {
+                signVideo.setupWithUrls(urls)
+            }
+            videoType != null -> {
+                when (videoType) {
+                    "restroom" -> signVideo.setup(listOf(R.raw.video10_quickqna_restroom))
+                    "wifi" -> signVideo.setup(listOf(R.raw.video11_quickqna_wifi))
+                    else -> null
+                }
+            }
+        }
     }
 }

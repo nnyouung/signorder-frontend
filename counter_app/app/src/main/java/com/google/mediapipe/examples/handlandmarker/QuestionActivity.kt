@@ -21,9 +21,9 @@ class QuestionActivity : AppCompatActivity() {
     private var countdownText: android.widget.TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val layoutType = intent.getStringExtra("layoutType")
         when (layoutType) {
-
             "order" -> {
                 val binding = ActivityQuestionBinding.inflate(layoutInflater)
                 setContentView(binding.root)
@@ -31,7 +31,6 @@ class QuestionActivity : AppCompatActivity() {
                 countdownOverlay = binding.root.findViewById(R.id.countDownOverlay)
                 countdownText = binding.root.findViewById(R.id.countDownText)
                 startCountdown()
-
 
                 val backButton = binding.root.findViewById<ImageButton>(R.id.backButton)
                 backButton.setOnClickListener {
@@ -43,6 +42,21 @@ class QuestionActivity : AppCompatActivity() {
                     containerId = R.id.order_fragment_container,
                     inquiryType = "order"
                 )
+
+                val restRoomButton = findViewById<ImageButton>(R.id.restRoomButton)
+                val wifiButton = findViewById<ImageButton>(R.id.wifiButton)
+
+                restRoomButton.setOnClickListener {
+                    val intent = Intent(this, AnswerActivity::class.java)
+                    intent.putExtra("videoType", "restroom")
+                    startActivity(intent)
+                }
+
+                wifiButton.setOnClickListener {
+                    val intent = Intent(this, AnswerActivity::class.java)
+                    intent.putExtra("videoType", "wifi")
+                    startActivity(intent)
+                }
             }
 
             "inquiry" -> {
@@ -63,6 +77,21 @@ class QuestionActivity : AppCompatActivity() {
                     containerId = R.id.inquiry_fragment_container,
                     inquiryType = "inquiry"
                 )
+
+                val restRoomButton = findViewById<ImageButton>(R.id.restRoomButton)
+                val wifiButton = findViewById<ImageButton>(R.id.wifiButton)
+
+                restRoomButton.setOnClickListener {
+                    val intent = Intent(this, AnswerActivity::class.java)
+                    intent.putExtra("videoType", "restroom")
+                    startActivity(intent)
+                }
+
+                wifiButton.setOnClickListener {
+                    val intent = Intent(this, AnswerActivity::class.java)
+                    intent.putExtra("videoType", "wifi")
+                    startActivity(intent)
+                }
             }
 
             else -> {
