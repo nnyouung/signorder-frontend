@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.widget.ImageButton
 
 class AnswerActivity : AppCompatActivity() {
+
+    private lateinit var signVideo: SignVideo
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_answer)
@@ -20,7 +23,9 @@ class AnswerActivity : AppCompatActivity() {
             finish()
         }
 
-        // TODO : 영상 재생 구현 필요
         // println("받은 sign_urls: ${urls.joinToString("\n")}")
+        signVideo = findViewById(R.id.signVideo)
+
+        signVideo.setupWithUrls(urls)
     }
 }
