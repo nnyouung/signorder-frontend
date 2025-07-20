@@ -101,30 +101,20 @@ class PermissionsFragment : Fragment() {
 
     private fun navigateToCamera() {
         Log.d(TAG, "navigateToCamera 호출됨")
-        lifecycleScope.launch {
-            try {
-                val containerId = when {
-                    requireActivity().findViewById<View?>(R.id.order_fragment_container) != null -> {
-                        Log.d(TAG, "order_fragment_container 찾음")
-                        R.id.order_fragment_container
-                    }
-                    requireActivity().findViewById<View?>(R.id.inquiry_fragment_container) != null -> {
-                        Log.d(TAG, "inquiry_fragment_container 찾음")
-                        R.id.inquiry_fragment_container
-                    }
-                    else -> {
-                        Log.e(TAG, "FragmentContainerView를 찾을 수 없습니다.")
-                        return@launch
-                    }
+        requireActivity().window.decorView.post {
+            val containerId = when {
+                requireActivity().findViewById<View?>(R.id.order_fragment_container) != null -> R.id.order_fragment_container
+                requireActivity().findViewById<View?>(R.id.inquiry_fragment_container) != null -> R.id.inquiry_fragment_container
+                else -> {
+                    Log.e(TAG, "FragmentContainerView를 찾을 수 없습니다.")
+                    return@post
                 }
-
-                Log.d(TAG, "카메라 프래그먼트로 네비게이션 시작")
-                Navigation.findNavController(requireActivity(), containerId)
-                    .navigate(R.id.action_permissions_to_camera)
-                Log.d(TAG, "카메라 프래그먼트로 네비게이션 완료")
-            } catch (e: Exception) {
-                Log.e(TAG, "카메라로 네비게이션 중 오류 발생", e)
             }
+            Log.d(TAG, "카메라 프래그먼트로 네비게이션 시작")
+            Navigation.findNavController(requireActivity(), containerId)
+                .navigate(R.id.action_permissions_to_camera)
+            Log.d(TAG, "카메라 프래그먼트로 네비게이션 완료")
         }
     }
+
 }

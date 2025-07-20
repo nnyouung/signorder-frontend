@@ -1,6 +1,8 @@
 package com.google.mediapipe.examples.handlandmarker
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,6 +21,9 @@ import com.google.mediapipe.examples.handlandmarker.fragment.CameraFragment
 class QuestionActivity : AppCompatActivity() {
     private var countdownOverlay: FrameLayout? = null
     private var countdownText: android.widget.TextView? = null
+    companion object {
+        private const val CAMERA_PERMISSION_REQUEST_CODE = 1001
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -100,6 +105,30 @@ class QuestionActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        checkCameraPermissionAndInit()
+    }
+
+    private fun checkCameraPermissionAndInit() {
+        if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            // NavHostFragment 내부 CameraFragment 찾기
+            val navHostFragment =
+                supportFragmentManager.findFragmentById(R.id.order_fragment_container) as? NavHostFragment
+                    ?: supportFragmentManager.findFragmentById(R.id.inquiry_fragment_container) as? NavHostFragment
+
+            val cameraFragment = navHostFragment?.childFragmentManager?.fragments
+                ?.firstOrNull { it is CameraFragment } as? CameraFragment
+
+            // 찾은 CameraFragment의 initializeCamera() 호출
+            cameraFragment?.initializeCamera()
+        } else {
+            requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
+        }
+    }
+
+
 
     private fun startCountdown(onFinish: () -> Unit = {}) {
         countdownOverlay?.visibility = View.VISIBLE
