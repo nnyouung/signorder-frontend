@@ -43,6 +43,8 @@ class SignVideo @JvmOverloads constructor(
                 Gravity.CENTER
             )
         }
+        background = context.getDrawable(R.drawable.rounded_background)
+        clipToOutline = true
     }
 
     fun setup(
