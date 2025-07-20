@@ -1,6 +1,8 @@
 package com.google.mediapipe.examples.handlandmarker
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -8,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import com.example.grpc.GrpcClient
@@ -18,19 +21,21 @@ import com.google.mediapipe.examples.handlandmarker.fragment.CameraFragment
 class QuestionActivity : AppCompatActivity() {
     private var countdownOverlay: FrameLayout? = null
     private var countdownText: android.widget.TextView? = null
+    companion object {
+        private const val CAMERA_PERMISSION_REQUEST_CODE = 1001
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val layoutType = intent.getStringExtra("layoutType")
         when (layoutType) {
-
             "order" -> {
                 val binding = ActivityQuestionBinding.inflate(layoutInflater)
                 setContentView(binding.root)
-
+                Log.d("QuestionActivity", "onCreate: setContentView 완료 (order)")
                 countdownOverlay = binding.root.findViewById(R.id.countDownOverlay)
                 countdownText = binding.root.findViewById(R.id.countDownText)
                 startCountdown()
-
 
                 val backButton = binding.root.findViewById<ImageButton>(R.id.backButton)
                 backButton.setOnClickListener {
@@ -42,12 +47,27 @@ class QuestionActivity : AppCompatActivity() {
                     containerId = R.id.order_fragment_container,
                     inquiryType = "order"
                 )
+
+                val restRoomButton = findViewById<ImageButton>(R.id.restRoomButton)
+                val wifiButton = findViewById<ImageButton>(R.id.wifiButton)
+
+                restRoomButton.setOnClickListener {
+                    val intent = Intent(this, AnswerActivity::class.java)
+                    intent.putExtra("videoType", "restroom")
+                    startActivity(intent)
+                }
+
+                wifiButton.setOnClickListener {
+                    val intent = Intent(this, AnswerActivity::class.java)
+                    intent.putExtra("videoType", "wifi")
+                    startActivity(intent)
+                }
             }
 
             "inquiry" -> {
                 val binding = ActivityGeneralQuestionBinding.inflate(layoutInflater)
                 setContentView(binding.root)
-
+                Log.d("QuestionActivity", "onCreate: setContentView 완료 (inquiry)")
                 countdownOverlay = binding.root.findViewById(R.id.countDownOverlay)
                 countdownText = binding.root.findViewById(R.id.countDownText)
                 startCountdown()
@@ -62,6 +82,21 @@ class QuestionActivity : AppCompatActivity() {
                     containerId = R.id.inquiry_fragment_container,
                     inquiryType = "inquiry"
                 )
+
+                val restRoomButton = findViewById<ImageButton>(R.id.restRoomButton)
+                val wifiButton = findViewById<ImageButton>(R.id.wifiButton)
+
+                restRoomButton.setOnClickListener {
+                    val intent = Intent(this, AnswerActivity::class.java)
+                    intent.putExtra("videoType", "restroom")
+                    startActivity(intent)
+                }
+
+                wifiButton.setOnClickListener {
+                    val intent = Intent(this, AnswerActivity::class.java)
+                    intent.putExtra("videoType", "wifi")
+                    startActivity(intent)
+                }
             }
 
             else -> {
@@ -70,6 +105,30 @@ class QuestionActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        checkCameraPermissionAndInit()
+    }
+
+    private fun checkCameraPermissionAndInit() {
+        if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            // NavHostFragment 내부 CameraFragment 찾기
+            val navHostFragment =
+                supportFragmentManager.findFragmentById(R.id.order_fragment_container) as? NavHostFragment
+                    ?: supportFragmentManager.findFragmentById(R.id.inquiry_fragment_container) as? NavHostFragment
+
+            val cameraFragment = navHostFragment?.childFragmentManager?.fragments
+                ?.firstOrNull { it is CameraFragment } as? CameraFragment
+
+            // 찾은 CameraFragment의 initializeCamera() 호출
+            cameraFragment?.initializeCamera()
+        } else {
+            requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
+        }
+    }
+
+
 
     private fun startCountdown(onFinish: () -> Unit = {}) {
         countdownOverlay?.visibility = View.VISIBLE
@@ -96,8 +155,15 @@ class QuestionActivity : AppCompatActivity() {
         val inquiryNumber = intent.getIntExtra("inquiry_number", -1)
         startCountdown{
             sendButton.setOnClickListener {
+                Log.d("QuestionActivity", "전송 버튼 클릭됨")
+                
                 val navHostFragment =
                     supportFragmentManager.findFragmentById(containerId) as? NavHostFragment
+
+                if (navHostFragment == null) {
+                    Log.e("QuestionActivity", "NavHostFragment를 찾을 수 없습니다.")
+                    return@setOnClickListener
+                }
 
                 val cameraFragment = navHostFragment
                     ?.childFragmentManager
@@ -105,8 +171,21 @@ class QuestionActivity : AppCompatActivity() {
                     ?.firstOrNull { it is CameraFragment } as? CameraFragment
 
                 if (cameraFragment != null) {
+                    Log.d("QuestionActivity", "CameraFragment 찾음")
+                    
+                    // 카메라 상태 확인
+                    val cameraStatus = cameraFragment.getCameraStatus()
+                    Log.d("QuestionActivity", "카메라 상태: $cameraStatus")
+                    
+                    if (!cameraFragment.isCameraInitialized()) {
+                        Log.w("QuestionActivity", "카메라가 초기화되지 않았습니다: $cameraStatus")
+                        Toast.makeText(this@QuestionActivity, "카메라를 초기화하는 중입니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+                    
                     val frameData = cameraFragment.getAllFrameVectors()
                     if (frameData.isNotEmpty()) {
+                        Log.d("QuestionActivity", "프레임 데이터 크기: ${frameData.size}")
                         val grpcClient = GrpcClient()
                         Log.d("GrpcLog", "gRPC 요청 시작")
                         Log.d("GrpcLog", "frameData 길이 = ${frameData.size}")
@@ -125,12 +204,13 @@ class QuestionActivity : AppCompatActivity() {
                         startActivity(intent)
                     } else {
                         Log.w("QuestionActivity", "아직 누적된 데이터가 없습니다.")
+                        Toast.makeText(this@QuestionActivity, "카메라 데이터를 수집 중입니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Log.e("QuestionActivity", "CameraFragment를 찾을 수 없습니다.")
+                    Toast.makeText(this@QuestionActivity, "카메라를 초기화할 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-
     }
 }

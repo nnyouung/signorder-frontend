@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="164dp"
                 android:layout_margin="30dp"
-                android:background="@drawable/rounded_background"
+                android:background="@drawable/home_button_selector"
                 android:padding="16dp">
 
                 <LinearLayout
@@ -66,6 +66,7 @@
                         android:text="문의하기"
                         android:textSize="20sp"
                         android:textStyle="bold"
+                        android:textColor="@color/home_text_selector"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
                 </LinearLayout>

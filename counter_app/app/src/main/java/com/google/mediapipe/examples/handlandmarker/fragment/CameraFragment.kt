@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
@@ -47,31 +48,61 @@ class CameraFragment : Fragment(), HandLandmarkerHelper.LandmarkerListener {
 
     private val allFrameVectors = mutableListOf<Float>()
 
+    fun initializeCamera() {
+        Log.d(TAG, "initializeCamera 호출됨")
+        if (!PermissionsFragment.hasPermissions(requireContext())) {
+            Log.w(TAG, "권한이 없어 카메라 초기화를 중단합니다.")
+            return
+        }
+        cameraProvider?.unbindAll()
+        setUpCamera()
+    }
+
     fun getAllFrameVectors(): List<Float> {
         return allFrameVectors.toList()
     }
 
+    fun isCameraInitialized(): Boolean {
+        return this::handLandmarkerHelper.isInitialized && camera != null && preview != null
+    }
+
+    fun getCameraStatus(): String {
+        return when {
+            !PermissionsFragment.hasPermissions(requireContext()) -> "권한 없음"
+            !this::handLandmarkerHelper.isInitialized -> "HandLandmarker 초기화 안됨"
+            camera == null -> "카메라 초기화 안됨"
+            preview == null -> "프리뷰 초기화 안됨"
+            else -> "정상"
+        }
+    }
+
     override fun onResume() {
         super.onResume()
+        Log.d(TAG, "CameraFragment onResume 시작")
 
-        val fragmentContainerId = when {
-            requireActivity().findViewById<View?>(R.id.order_fragment_container) != null -> R.id.order_fragment_container
-            requireActivity().findViewById<View?>(R.id.inquiry_fragment_container) != null -> R.id.inquiry_fragment_container
-            else -> null
-        }
+        if (!PermissionsFragment.hasPermissions(requireContext())) {
+            Log.d(TAG, "카메라 권한이 없습니다. 권한 화면으로 이동합니다.")
+            val fragmentContainerId = when {
+                requireActivity().findViewById<View?>(R.id.order_fragment_container) != null -> R.id.order_fragment_container
+                requireActivity().findViewById<View?>(R.id.inquiry_fragment_container) != null -> R.id.inquiry_fragment_container
+                else -> null
+            }
 
-        if (fragmentContainerId != null) {
-            if (!PermissionsFragment.hasPermissions(requireContext())) {
+            if (fragmentContainerId != null) {
                 Navigation.findNavController(requireActivity(), fragmentContainerId)
                     .navigate(R.id.action_camera_to_permissions)
+            } else {
+                Log.e(TAG, "FragmentContainerView ID를 찾을 수 없습니다.")
             }
-        } else {
-            Log.e("CameraFragment", "FragmentContainerView ID를 찾을 수 없습니다.")
+            return
         }
 
+        Log.d(TAG, "PreviewView 상태: isAttachedToWindow=${fragmentCameraBinding.viewFinder.isAttachedToWindow}")
+
         backgroundExecutor.execute {
-            if (handLandmarkerHelper.isClose()) {
+            if (this::handLandmarkerHelper.isInitialized && handLandmarkerHelper.isClose()) {
                 handLandmarkerHelper.setupHandLandmarker()
+                Log.d(TAG, "HandLandmarkerHelper 초기화 완료")
             }
         }
     }
@@ -79,6 +110,11 @@ class CameraFragment : Fragment(), HandLandmarkerHelper.LandmarkerListener {
 
     override fun onPause() {
         super.onPause()
+
+        cameraProvider?.unbindAll()
+        camera = null
+        preview = null
+
         if (this::handLandmarkerHelper.isInitialized) {
             viewModel.setMaxHands(handLandmarkerHelper.maxNumHands)
             viewModel.setMinHandDetectionConfidence(handLandmarkerHelper.minHandDetectionConfidence)
@@ -91,6 +127,7 @@ class CameraFragment : Fragment(), HandLandmarkerHelper.LandmarkerListener {
     }
 
     override fun onDestroyView() {
+        cameraProvider?.unbindAll()
         _fragmentCameraBinding = null
         super.onDestroyView()
         backgroundExecutor.shutdown()
@@ -110,70 +147,109 @@ class CameraFragment : Fragment(), HandLandmarkerHelper.LandmarkerListener {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d(TAG, "CameraFragment onViewCreated 시작")
 
         backgroundExecutor = Executors.newSingleThreadExecutor()
 
-        fragmentCameraBinding.viewFinder.post {
-            setUpCamera()
+        if (PermissionsFragment.hasPermissions(requireContext())) {
+            Log.d(TAG, "권한이 있습니다. 카메라를 초기화합니다.")
+
+            fragmentCameraBinding.viewFinder.viewTreeObserver.addOnGlobalLayoutListener(
+                object : ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        fragmentCameraBinding.viewFinder.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        Log.d(TAG, "SurfaceView 윈도우에 attach됨 - setUpCamera 호출")
+                        setUpCamera()
+                    }
+                }
+            )
+        } else {
+            Log.d(TAG, "권한이 없습니다. 카메라 초기화를 건너뜁니다.")
         }
 
         backgroundExecutor.execute {
-            handLandmarkerHelper = HandLandmarkerHelper(
-                context = requireContext(),
-                runningMode = RunningMode.LIVE_STREAM,
-                minHandDetectionConfidence = viewModel.currentMinHandDetectionConfidence,
-                minHandTrackingConfidence = viewModel.currentMinHandTrackingConfidence,
-                minHandPresenceConfidence = viewModel.currentMinHandPresenceConfidence,
-                maxNumHands = viewModel.currentMaxHands,
-                currentDelegate = viewModel.currentDelegate,
-                handLandmarkerHelperListener = this
-            )
+            try {
+                Log.d(TAG, "HandLandmarkerHelper 초기화 시작")
+                handLandmarkerHelper = HandLandmarkerHelper(
+                    context = requireContext(),
+                    runningMode = RunningMode.LIVE_STREAM,
+                    minHandDetectionConfidence = viewModel.currentMinHandDetectionConfidence,
+                    minHandTrackingConfidence = viewModel.currentMinHandTrackingConfidence,
+                    minHandPresenceConfidence = viewModel.currentMinHandPresenceConfidence,
+                    maxNumHands = viewModel.currentMaxHands,
+                    currentDelegate = viewModel.currentDelegate,
+                    handLandmarkerHelperListener = this
+                )
+                Log.d(TAG, "HandLandmarkerHelper 초기화 완료")
+            } catch (e: Exception) {
+                Log.e(TAG, "HandLandmarkerHelper 초기화 실패", e)
+            }
         }
     }
 
     private fun setUpCamera() {
+        Log.d(TAG, "setUpCamera 시작")
+
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener(
             {
-                cameraProvider = cameraProviderFuture.get()
-                bindCameraUseCases()
+                try {
+                    cameraProvider = cameraProviderFuture.get()
+                    Log.d(TAG, "CameraProvider 초기화 완료")
+                    bindCameraUseCases()
+                } catch (e: Exception) {
+                    Log.e(TAG, "CameraProvider 초기화 실패", e)
+                }
             }, ContextCompat.getMainExecutor(requireContext())
         )
     }
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun bindCameraUseCases() {
+        Log.d(TAG, "bindCameraUseCases 시작")
+        
         val cameraProvider = cameraProvider
             ?: throw IllegalStateException("카메라 초기화 실패")
 
-        val cameraSelector =
-            CameraSelector.Builder().requireLensFacing(cameraFacing).build()
+        try {
+            // Surface가 준비되었는지 다시 한번 확인
+            if (!fragmentCameraBinding.viewFinder.isAttachedToWindow) {
+                Log.w(TAG, "PreviewView가 아직 윈도우에 연결되지 않았습니다. 잠시 후 다시 시도합니다.")
+                fragmentCameraBinding.viewFinder.post {
+                    bindCameraUseCases()
+                }
+                return
+            }
 
-        preview = Preview.Builder()
-            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-            .setTargetRotation(fragmentCameraBinding.viewFinder.display.rotation)
-            .build()
+            val cameraSelector =
+                CameraSelector.Builder().requireLensFacing(cameraFacing).build()
 
-        imageAnalyzer =
-            ImageAnalysis.Builder()
+            preview = Preview.Builder()
                 .setTargetAspectRatio(AspectRatio.RATIO_4_3)
                 .setTargetRotation(fragmentCameraBinding.viewFinder.display.rotation)
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                 .build()
-                .also {
-                    it.setAnalyzer(backgroundExecutor) { image ->
-                        detectHand(image)
+
+            imageAnalyzer =
+                ImageAnalysis.Builder()
+                    .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                    .setTargetRotation(fragmentCameraBinding.viewFinder.display.rotation)
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+                    .build()
+                    .also {
+                        it.setAnalyzer(backgroundExecutor) { image ->
+                            detectHand(image)
+                        }
                     }
-                }
 
-        cameraProvider.unbindAll()
+            cameraProvider.unbindAll()
 
-        try {
             camera = cameraProvider.bindToLifecycle(
                 this, cameraSelector, preview, imageAnalyzer
             )
             preview?.setSurfaceProvider(fragmentCameraBinding.viewFinder.surfaceProvider)
+            
+            Log.d(TAG, "카메라 Use case 연결 완료")
         } catch (exc: Exception) {
             Log.e(TAG, "Use case 연결 실패: ", exc)
         }

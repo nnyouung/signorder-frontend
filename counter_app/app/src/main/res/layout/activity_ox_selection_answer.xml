@@ -70,7 +70,7 @@
                 android:layout_marginHorizontal="8dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/yes_no_button_backgound"
+                android:background="@drawable/yes_no_button_selector"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -87,7 +87,8 @@
                     android:layout_height="wrap_content"
                     android:text="예"
                     android:textSize="16sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:textColor="@color/yes_no_text_selector"/>
             </LinearLayout>
 
             <!-- 아니오 버튼 -->
@@ -98,7 +99,7 @@
                 android:layout_marginHorizontal="8dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/yes_no_button_backgound"
+                android:background="@drawable/yes_no_button_selector"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -115,7 +116,8 @@
                     android:layout_height="wrap_content"
                     android:text="아니요"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/yes_no_text_selector" />
             </LinearLayout>
         </LinearLayout>
 
