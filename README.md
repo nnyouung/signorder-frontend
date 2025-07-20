@@ -98,21 +98,5 @@ signorder-frontend/
 
 ---
 
-## 🔬 API/모듈 설명
-### admin-web, menu-web
-- api.js: API 서버와의 통신 설정
-- WebSocketProvider.js: WebSocket 연결 관리
-- components/: UI 컴포넌트 (채팅, 입력창, 주문 리스트 등)
-- pages/: 주요 페이지 (로그인, 주문, 채팅 등)
-
-### counter_app
-- HandLandmarkerHelper.kt: MediaPipe 기반 수어 인식 핵심 로직
-- WebSocketService.kt: WebSocket 연결 관리
-- GrpcClient.kt: gRPC 연결 관리
-- HomeActivity.kt, QuestionActivity.kt, AnswerActivity.kt: 주요 액티비티 (홈, 질문(수어 인식), 답변)
-- proto/: gRPC 통신용 프로토콜 정의
-
----
-
 ## ✨ 이슈 및 참고 사항
-- 환경 변수: API 서버 주소, WebSocket 주소 등은 .env 및 gradle.properties 파일에서 관리
+- API 서버 주소, WebSocket 주소 등은 .env 및 gradle.properties 파일에서 관리
