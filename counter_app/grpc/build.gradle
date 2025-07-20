@@ -1,0 +1,103 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'com.google.protobuf' version '0.9.4'
+}
+
+configurations.all {
+    exclude group: "com.google.protobuf", module: "protobuf-javalite"
+
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == "com.google.protobuf") {
+            details.useVersion("3.25.3")
+        }
+    }
+}
+
+dependencies {
+    implementation ("io.grpc:grpc-kotlin-stub:1.4.0") {
+        exclude group: "com.google.protobuf", module: "protobuf-javalite"
+    }
+    implementation ("io.grpc:grpc-stub:1.64.0") {
+        exclude group: "com.google.protobuf", module: "protobuf-javalite"
+    }
+    implementation("io.grpc:grpc-protobuf:1.64.0") {
+        exclude group: "com.google.protobuf", module: "protobuf-javalite"
+    }
+    implementation ("io.grpc:grpc-netty-shaded:1.64.0")
+    implementation ("com.google.protobuf:protobuf-java:3.25.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation ("io.grpc:grpc-okhttp:1.64.0")
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.25.3"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.64.0"
+        }
+        grpckt {
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
+        }
+    }
+
+    generateProtoTasks {
+        all().configureEach { task ->
+            task.builtins {
+                java {}
+            }
+            task.plugins {
+                grpc {}
+                grpckt {}
+            }
+        }
+    }
+}
+
+if (!tasks.findByName("removeGeneratedWkt")) {
+    tasks.register("removeGeneratedWkt", Delete) {
+        delete fileTree("${buildDir}/generated/source/proto") {
+            include "**/google/protobuf/**"
+        }
+        doLast {
+            println("Removed generated WKT sources.")
+        }
+    }
+}
+
+tasks.named("generateProto") {
+    finalizedBy("removeGeneratedWkt")
+}
+
+// Remove all protobuf generated classes from the final jar
+tasks.withType(Jar) {
+    exclude "**/google/protobuf/**"
+    exclude "**/com/google/protobuf/**"
+}
+
+// TODO : 확인 후 수정 필요
+//java {
+//    sourceCompatibility = JavaVersion.VERSION_1_8
+//    targetCompatibility = JavaVersion.VERSION_1_8
+//}
+//
+//tasks.named('jar') {
+//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//    exclude("**/*.proto")
+//    exclude("google/protobuf/**")
+//    exclude("com/google/protobuf/**")
+//}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
