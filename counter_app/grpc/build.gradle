@@ -8,8 +8,8 @@ configurations.all {
     exclude group: "com.google.protobuf", module: "protobuf-javalite"
 
     resolutionStrategy.eachDependency { details ->
-        if (details.requested.group == "com.google.protobuf" && details.requested.name == "protobuf-javalite") {
-            details.useTarget("com.google.protobuf:protobuf-java:3.25.3")
+        if (details.requested.group == "com.google.protobuf") {
+            details.useVersion("3.25.3")
         }
     }
 }
@@ -21,7 +21,9 @@ dependencies {
     implementation ("io.grpc:grpc-stub:1.64.0") {
         exclude group: "com.google.protobuf", module: "protobuf-javalite"
     }
-    implementation("io.grpc:grpc-protobuf:1.64.0")
+    implementation("io.grpc:grpc-protobuf:1.64.0") {
+        exclude group: "com.google.protobuf", module: "protobuf-javalite"
+    }
     implementation ("io.grpc:grpc-netty-shaded:1.64.0")
     implementation ("com.google.protobuf:protobuf-java:3.25.3")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
@@ -67,6 +69,12 @@ if (!tasks.findByName("removeGeneratedWkt")) {
 
 tasks.named("generateProto") {
     finalizedBy("removeGeneratedWkt")
+}
+
+// Remove all protobuf generated classes from the final jar
+tasks.withType(Jar) {
+    exclude "**/google/protobuf/**"
+    exclude "**/com/google/protobuf/**"
 }
 
 // TODO : 확인 후 수정 필요

@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import com.example.grpc.GrpcClient
@@ -26,7 +27,7 @@ class QuestionActivity : AppCompatActivity() {
             "order" -> {
                 val binding = ActivityQuestionBinding.inflate(layoutInflater)
                 setContentView(binding.root)
-
+                Log.d("QuestionActivity", "onCreate: setContentView 완료 (order)")
                 countdownOverlay = binding.root.findViewById(R.id.countDownOverlay)
                 countdownText = binding.root.findViewById(R.id.countDownText)
                 startCountdown()
@@ -47,7 +48,7 @@ class QuestionActivity : AppCompatActivity() {
             "inquiry" -> {
                 val binding = ActivityGeneralQuestionBinding.inflate(layoutInflater)
                 setContentView(binding.root)
-
+                Log.d("QuestionActivity", "onCreate: setContentView 완료 (inquiry)")
                 countdownOverlay = binding.root.findViewById(R.id.countDownOverlay)
                 countdownText = binding.root.findViewById(R.id.countDownText)
                 startCountdown()
@@ -96,8 +97,15 @@ class QuestionActivity : AppCompatActivity() {
         val inquiryNumber = intent.getIntExtra("inquiry_number", -1)
         startCountdown{
             sendButton.setOnClickListener {
+                Log.d("QuestionActivity", "전송 버튼 클릭됨")
+                
                 val navHostFragment =
                     supportFragmentManager.findFragmentById(containerId) as? NavHostFragment
+
+                if (navHostFragment == null) {
+                    Log.e("QuestionActivity", "NavHostFragment를 찾을 수 없습니다.")
+                    return@setOnClickListener
+                }
 
                 val cameraFragment = navHostFragment
                     ?.childFragmentManager
@@ -105,8 +113,21 @@ class QuestionActivity : AppCompatActivity() {
                     ?.firstOrNull { it is CameraFragment } as? CameraFragment
 
                 if (cameraFragment != null) {
+                    Log.d("QuestionActivity", "CameraFragment 찾음")
+                    
+                    // 카메라 상태 확인
+                    val cameraStatus = cameraFragment.getCameraStatus()
+                    Log.d("QuestionActivity", "카메라 상태: $cameraStatus")
+                    
+                    if (!cameraFragment.isCameraInitialized()) {
+                        Log.w("QuestionActivity", "카메라가 초기화되지 않았습니다: $cameraStatus")
+                        Toast.makeText(this@QuestionActivity, "카메라를 초기화하는 중입니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+                    
                     val frameData = cameraFragment.getAllFrameVectors()
                     if (frameData.isNotEmpty()) {
+                        Log.d("QuestionActivity", "프레임 데이터 크기: ${frameData.size}")
                         val grpcClient = GrpcClient()
                         Log.d("GrpcLog", "gRPC 요청 시작")
                         Log.d("GrpcLog", "frameData 길이 = ${frameData.size}")
@@ -125,12 +146,13 @@ class QuestionActivity : AppCompatActivity() {
                         startActivity(intent)
                     } else {
                         Log.w("QuestionActivity", "아직 누적된 데이터가 없습니다.")
+                        Toast.makeText(this@QuestionActivity, "카메라 데이터를 수집 중입니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Log.e("QuestionActivity", "CameraFragment를 찾을 수 없습니다.")
+                    Toast.makeText(this@QuestionActivity, "카메라를 초기화할 수 없습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-
     }
 }
