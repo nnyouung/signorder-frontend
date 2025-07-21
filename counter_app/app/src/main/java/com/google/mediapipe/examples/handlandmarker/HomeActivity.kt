@@ -41,7 +41,7 @@ class HomeActivity : AppCompatActivity() {
             runOnUiThread {
                 val layoutType = when (title) {
                     "order" -> "order"
-                    "inquiryMessage" -> "inquiry"
+                    "inquiry" -> "inquiry"
                     else -> null
                 }
 
