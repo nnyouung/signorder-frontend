@@ -87,6 +87,11 @@ signorder-frontend/
 ---
 
 ## 🚀 설치 및 실행 방법
+
+### ✨ 유의사항
+- API 서버 주소, WebSocket 주소 등은 .env 및 gradle.properties 파일에서 관리
+- 카운터 앱(counter_app)과 관리자 웹(admin-web)이 동시에 실행되어야 시스템이 정상적으로 작동
+
 ### admin-web, menu-web
 1. cd admin-web (또는 cd menu-web)
 2. npm install
@@ -95,8 +100,3 @@ signorder-frontend/
 ### counter_app
 1. Android Studio로 counter_app 폴더 열기
 2. 실제 디바이스 또는 에뮬레이터에서 실행
-
----
-
-## ✨ 이슈 및 참고 사항
-- API 서버 주소, WebSocket 주소 등은 .env 및 gradle.properties 파일에서 관리
