@@ -23,6 +23,9 @@ def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
+def wsUrl = project.properties["WS_URL"]
+def wsApiKey = project.properties["WS_API_KEY"]
+
 android {
     namespace 'com.google.mediapipe.examples.handlandmarker'
     compileSdk 35
