@@ -88,7 +88,7 @@ object WebSocketService {
                         val title = data.getString("title")
                         val num = data.getInt("num")
 
-                        if (title == "order" || title == "inquiryMessage") {
+                        if (title == "order" || title == "inquiry") {
                             Log.d(TAG, "문의사항 메시지 수신됨 (title=$title, num=$num)")
                             onSignOrderReceived?.invoke(title,num)
                         } else {

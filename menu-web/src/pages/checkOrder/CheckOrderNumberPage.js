@@ -9,23 +9,13 @@ import { ReactComponent as IconCheck } from "@/assets/icons/check.svg";
 import Button from "@/components/Button";
 import SignVideo from "@/components/SignVideo";
 import BottomSheet from "@/components/BottomSheet";
+import video9 from "@/assets/videos/video9.mp4";
+import video12 from "@/assets/videos/video12.mp4";
 
 const CheckOrderNumberPage = () => {
   const navigate = useNavigate();
   const [value, setValue] = useState("");
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-
-  const videos = [
-    "https://signorderavatarvideo.s3.ap-northeast-2.amazonaws.com/%E1%84%8C%E1%85%AE%E1%84%86%E1%85%AE%E1%86%AB.mp4",
-    "https://signorderavatarvideo.s3.ap-northeast-2.amazonaws.com/%E1%84%87%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A9.mp4",
-    "https://signorderavatarvideo.s3.ap-northeast-2.amazonaws.com/%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A7%E1%86%A8.mp4",
-  ];
-
-  const videos2 = [
-    "https://signorderavatarvideo.s3.ap-northeast-2.amazonaws.com/%E1%84%8B%E1%85%A5%E1%86%B9%E1%84%83%E1%85%A1.mp4",
-    "https://signorderavatarvideo.s3.ap-northeast-2.amazonaws.com/%E1%84%8C%E1%85%AE%E1%84%86%E1%85%AE%E1%86%AB.mp4",
-    "https://signorderavatarvideo.s3.ap-northeast-2.amazonaws.com/%E1%84%87%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A9.mp4",
-  ];
 
   const fetchGetOrderNumber = async () => {
     try {
@@ -63,7 +53,7 @@ const CheckOrderNumberPage = () => {
 
         <div style={{ margin: "0 0 70px 0" }}>
           {/* 주문번호를입력해주세요 */}
-          <SignVideo srcList={videos} />
+          <SignVideo srcList={[video9]} />
         </div>
 
         <Button
@@ -78,7 +68,7 @@ const CheckOrderNumberPage = () => {
         <BottomSheet onClose={() => setIsBottomSheetOpen(false)}>
           {/* 없는주문번호입니다 */}
           <SignVideo
-            srcList={videos2}
+            srcList={video12}
             onVideoEnd={() => setIsBottomSheetOpen(false)}
           />
         </BottomSheet>
