@@ -19,6 +19,7 @@ import Button from "@/components/Button";
 import BottomSheet from "@/components/BottomSheet";
 import SignVideo from "@/components/SignVideo";
 import ButtonYesNo from "@/components/ButtonYesNo";
+import video7 from "@/assets/videos/video7.mp4";
 
 const CartList = ({ menu, isLast, onIncrease, onDecrease, onDelete }) => {
   return (
@@ -126,12 +127,6 @@ const ShoppingCartPage = () => {
   const { cartItems, removeFromCart, clearCart } = useCart();
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [menu, setMenu] = useState(cartItems);
-
-  const videos = [
-    "https://signorderavatarvideo.s3.ap-northeast-2.amazonaws.com/%E1%84%8B%E1%85%A7%E1%84%80%E1%85%B5.mp4",
-    "https://signorderavatarvideo.s3.ap-northeast-2.amazonaws.com/%E1%84%86%E1%85%A5%E1%86%A8%E1%84%83%E1%85%A1.mp4",
-    "https://signorderavatarvideo.s3.ap-northeast-2.amazonaws.com/%E1%84%86%E1%85%AE%E1%86%AF%E1%84%8B%E1%85%B3%E1%86%B7%E1%84%91%E1%85%AD.mp4",
-  ];
 
   useEffect(() => {
     setMenu(cartItems);
@@ -244,7 +239,7 @@ const ShoppingCartPage = () => {
         {isBottomSheetOpen && (
           <BottomSheet onClose={() => setIsBottomSheetOpen(false)}>
             {/* 드시고가실건가요 */}
-            <SignVideo srcList={videos} />
+            <SignVideo srcList={[video7]} />
             <div style={{ margin: "24px 0 24px 0" }}>
               <ButtonYesNo
                 pressYes={() => {
