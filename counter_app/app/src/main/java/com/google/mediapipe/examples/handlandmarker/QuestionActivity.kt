@@ -161,12 +161,15 @@ class QuestionActivity : AppCompatActivity() {
     }
 
     private fun setupSendButton(sendButton: View, containerId: Int) {
-        val inquiryNumber = WebSocketService.currentInquiryNum ?: -1
+        val fromHome = intent.getBooleanExtra("fromHome", false)
+        val inquiryNumber = if (fromHome) -1 else WebSocketService.currentInquiryNum ?: -1
         val inquiryType = WebSocketService.currentInquiryType ?: "inquiry"
+
+        Log.d("QuestionActivity", "inquiryNumber=$inquiryNumber, inquiryType=$inquiryType")
 
         startCountdown{
             sendButton.setOnClickListener {
-                Log.d("QuestionActivity", "전송 버튼 클릭됨")
+//                Log.d("QuestionActivity", "전송 버튼 클릭됨")
                 
                 val navHostFragment =
                     supportFragmentManager.findFragmentById(containerId) as? NavHostFragment
@@ -207,13 +210,20 @@ class QuestionActivity : AppCompatActivity() {
                             frameData = frameData,
                             inquiryType = inquiryType,
                             num = inquiryNumber,
-                            onLog = { message -> Log.d("GrpcLog", message) }
+                            onLog = { message -> Log.d("GrpcLog", message) },
+                            onResult = { success ->
+                                runOnUiThread {
+                                    val resultIntent = Intent("GRPC_RESULT")
+                                    resultIntent.putExtra("success", success)
+                                    sendBroadcast(resultIntent) // ✅ 로딩 화면으로 결과 전달
+                                    grpcClient.shutdown()
+                                }
+                            }
                         )
-                        grpcClient.shutdown()
-                        
-                        // 전송 후 LoadingActivity로 이동
+
                         val intent = Intent(this@QuestionActivity, LoadingActivity::class.java)
                         startActivity(intent)
+
                     } else {
                         Log.w("QuestionActivity", "아직 누적된 데이터가 없습니다.")
                         Toast.makeText(this@QuestionActivity, "카메라 데이터를 수집 중입니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()

@@ -62,6 +62,7 @@ class HomeActivity : AppCompatActivity() {
         inquiryButton.setOnClickListener {
             val intent = Intent(this, QuestionActivity::class.java)
             intent.putExtra("layoutType", "inquiry")
+            intent.putExtra("fromHome", true)
             startActivity(intent)
         }
     }

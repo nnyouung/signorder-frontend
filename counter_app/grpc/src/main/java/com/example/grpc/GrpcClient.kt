@@ -21,17 +21,20 @@ class GrpcClient(
     fun sendAllFrameData(
         frameData: List<Float>,
         inquiryType: String = "order",
-        num: Int = 123,
-        onLog: (String) -> Unit
+        num: Int = -1,
+        onLog: (String) -> Unit,
+        onResult: (Boolean) -> Unit
     ) {
         val responseObserver = object : StreamObserver<Inquiry.InquiryResponse> {
             override fun onNext(value: Inquiry.InquiryResponse) {
+                onResult(value.success)
                 onLog("응답: ${value.success}")
             }
 
             override fun onError(t: Throwable) {
                 onLog("오류 발생: ${t.message}")
                 onLog("StackTrace: ${t.stackTraceToString()}")
+                onResult(false)
             }
 
             override fun onCompleted() {
