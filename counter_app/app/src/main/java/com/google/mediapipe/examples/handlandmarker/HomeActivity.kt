@@ -47,7 +47,6 @@ class HomeActivity : AppCompatActivity() {
 
                 if (layoutType != null) {
                     val intent = Intent(this, OxSelectionAnswerActivity::class.java)
-                    intent.putExtra("inquiry_number", number)
                     intent.putExtra("layoutType", layoutType)
                     startActivity(intent)
                 } else {
