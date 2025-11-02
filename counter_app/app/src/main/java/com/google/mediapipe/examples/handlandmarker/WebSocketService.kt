@@ -29,6 +29,9 @@ object WebSocketService {
     var onSignUrlsReceived: ((List<String>) -> Unit)? = null  // 수어 영상 수신용
     var onSignOrderReceived: ((String, Int) -> Unit)? = null  // 문의사항 수신용
 
+    var currentInquiryNum: Int? = null  // 채팅방 번호 저장
+    var currentInquiryType: String? = null  // 채팅방 타입 저장
+
     fun connect() {
         Log.d(TAG, "WebSocket 연결 시도: $URL")
 
@@ -90,6 +93,8 @@ object WebSocketService {
 
                         if (title == "order" || title == "inquiry") {
                             Log.d(TAG, "문의사항 메시지 수신됨 (title=$title, num=$num)")
+                            currentInquiryNum = num
+                            currentInquiryType = title
                             onSignOrderReceived?.invoke(title,num)
                         } else {
                             Log.d(TAG, "알 수 없는 title 수신됨: $title")

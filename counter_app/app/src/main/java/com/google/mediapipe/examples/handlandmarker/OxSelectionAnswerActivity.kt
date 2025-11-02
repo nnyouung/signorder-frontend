@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import com.example.grpc.GrpcClient
+import android.util.Log
 
 class OxSelectionAnswerActivity : AppCompatActivity() {
     private val grpcClient = GrpcClient()
@@ -26,9 +27,8 @@ class OxSelectionAnswerActivity : AppCompatActivity() {
             )
         )
 
-        val inquiryNumber = intent.getIntExtra("inquiry_number", -1)
-        val layoutType = intent.getStringExtra("layoutType")?: "inquiry"
-        println("전달받은 문의 번호: $inquiryNumber")
+        val inquiryNumber = WebSocketService.currentInquiryNum ?: -1
+        val inquiryType = WebSocketService.currentInquiryType ?: "inquiry"
 
         val backButton = findViewById<ImageButton>(R.id.backButton)
         backButton.setOnClickListener{
@@ -44,13 +44,13 @@ class OxSelectionAnswerActivity : AppCompatActivity() {
         // TODO: 버튼 클릭 시 색상 변화 기능 및 아이콘 변경
         yesButton.setOnClickListener{
             val intent = Intent(this, QuestionActivity::class.java)
-            intent.putExtra("layoutType", layoutType)
-            intent.putExtra("num", inquiryNumber)
+            Log.d("OXDebug", "yesButton 눌림, inquiryType=$inquiryType")
+            intent.putExtra("layoutType", inquiryType)
             startActivity(intent)
         }
 
         noButton.setOnClickListener{
-            grpcClient.sendFastInquiry(title = layoutType, num = inquiryNumber) { success ->
+            grpcClient.sendFastInquiry(title = inquiryType, num = inquiryNumber) { success ->
                 runOnUiThread {
                     if (success) {
                         println("FastInquiry 성공")
