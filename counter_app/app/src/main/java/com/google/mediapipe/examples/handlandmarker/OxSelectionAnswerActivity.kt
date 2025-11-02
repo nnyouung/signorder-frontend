@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import com.example.grpc.GrpcClient
-import android.util.Log
 
 class OxSelectionAnswerActivity : AppCompatActivity() {
     private val grpcClient = GrpcClient()
@@ -27,8 +26,9 @@ class OxSelectionAnswerActivity : AppCompatActivity() {
             )
         )
 
-        val inquiryNumber = WebSocketService.currentInquiryNum ?: -1
-        val inquiryType = WebSocketService.currentInquiryType ?: "inquiry"
+        val inquiryNumber = intent.getIntExtra("inquiry_number", -1)
+        val layoutType = intent.getStringExtra("layoutType")?: "inquiry"
+        println("전달받은 문의 번호: $inquiryNumber")
 
         val backButton = findViewById<ImageButton>(R.id.backButton)
         backButton.setOnClickListener{
@@ -43,13 +43,13 @@ class OxSelectionAnswerActivity : AppCompatActivity() {
 
         yesButton.setOnClickListener{
             val intent = Intent(this, QuestionActivity::class.java)
-            Log.d("OXDebug", "yesButton 눌림, inquiryType=$inquiryType")
-            intent.putExtra("layoutType", inquiryType)
+            intent.putExtra("layoutType", layoutType)
+            intent.putExtra("num", inquiryNumber)
             startActivity(intent)
         }
 
         noButton.setOnClickListener{
-            grpcClient.sendFastInquiry(title = inquiryType, num = inquiryNumber) { success ->
+            grpcClient.sendFastInquiry(title = layoutType, num = inquiryNumber) { success ->
                 runOnUiThread {
                     if (success) {
                         println("FastInquiry 성공")
