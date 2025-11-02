@@ -11,6 +11,12 @@ const SignVideo = ({ srcList = [], onVideoEnd }) => {
   const handleReplay = () => {
     setIsEnded(false);
     setCurrentIndex(0);
+
+    const video = videoRef.current;
+    if (video) {
+      video.currentTime = 0;
+      video.play();
+    }
   };
 
   const handleEnded = () => {
@@ -32,7 +38,7 @@ const SignVideo = ({ srcList = [], onVideoEnd }) => {
         paddingTop: "100%",
         backgroundColor: isEnded && "rgba(0,0,0,0.7)",
         borderRadius: 16,
-        pointerEvents: "none",
+        pointerEvents: isEnded ? "auto" : "none",
       }}
     >
       <video
