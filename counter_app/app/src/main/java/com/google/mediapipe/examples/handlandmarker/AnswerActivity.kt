@@ -15,7 +15,7 @@ class AnswerActivity : AppCompatActivity() {
 
         signVideo = findViewById(R.id.signVideo)
         val backButton = findViewById<ImageButton>(R.id.backButton)
-        backButton.setOnClickListener{if (!isFinishing) {
+        backButton.setOnClickListener{
             val intent = Intent(this, HomeActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             startActivity(intent)
@@ -25,10 +25,6 @@ class AnswerActivity : AppCompatActivity() {
         val urls = intent.getStringArrayListExtra("sign_urls")
         val videoType = intent.getStringExtra("videoType")
 
-        // 결제해드릴게요, 예, 아니오, 잠시만 기다려주세요 부분 영상으로 추가하기
-//        signVideo.setup(listOf(R.raw.video12_yes))
-//        signVideo.setup(listOf(R.raw.video13_no))
-//        signVideo.setup(listOf(R.raw.video14_pay))
         when {
             urls != null -> {
                 signVideo.setupWithUrls(urls)
