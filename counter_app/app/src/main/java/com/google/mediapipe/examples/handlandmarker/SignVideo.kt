@@ -96,6 +96,7 @@ class SignVideo @JvmOverloads constructor(
 
     private fun onVideoEnded() {
         replayButton.visibility = VISIBLE // 비디오 재생 끝났을 때 재생버튼이 보이게
+        // 이어붙인 영상으로 변경됨에 따라 인덱스 검사 코드 삭제
 //        if (currentIndex < mediaItems.lastIndex) {
 //
 //        } else {

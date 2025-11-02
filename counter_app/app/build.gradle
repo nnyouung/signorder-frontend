@@ -21,15 +21,8 @@ plugins {
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
-//keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
-// keystore 없을때 체크 건너뜀
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-    println("✅ keystore.properties loaded")
-} else {
-    println("⚠️ keystore.properties not found — skipping signing for debug build")
-}
 def wsUrl = project.properties["WS_URL"]
 def wsApiKey = project.properties["WS_API_KEY"]
 
