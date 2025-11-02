@@ -41,7 +41,6 @@ class OxSelectionAnswerActivity : AppCompatActivity() {
         val yesButton = findViewById<LinearLayout>(R.id.yesButton)
         val noButton = findViewById<LinearLayout>(R.id.noButton)
 
-        // TODO: 버튼 클릭 시 색상 변화 기능 및 아이콘 변경
         yesButton.setOnClickListener{
             val intent = Intent(this, QuestionActivity::class.java)
             Log.d("OXDebug", "yesButton 눌림, inquiryType=$inquiryType")
