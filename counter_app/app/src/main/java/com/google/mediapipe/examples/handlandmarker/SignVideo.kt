@@ -96,14 +96,15 @@ class SignVideo @JvmOverloads constructor(
 
     private fun onVideoEnded() {
         replayButton.visibility = VISIBLE // 비디오 재생 끝났을 때 재생버튼이 보이게
-        if (currentIndex < mediaItems.lastIndex) {
-            replayButton.setOnClickListener {
-                replayButton.visibility = INVISIBLE // 다시재생 버튼 클릭 시 재생버튼 감추기
-                currentIndex++
-                playCurrent()
-            }
-        } else {
-            onCompleted?.invoke()
+//        if (currentIndex < mediaItems.lastIndex) {
+//
+//        } else {
+//            onCompleted?.invoke()
+//        }
+        replayButton.setOnClickListener {
+            replayButton.visibility = INVISIBLE // 다시재생 버튼 클릭 시 재생버튼 감추기
+//            currentIndex++
+            playCurrent()
         }
     }
 
