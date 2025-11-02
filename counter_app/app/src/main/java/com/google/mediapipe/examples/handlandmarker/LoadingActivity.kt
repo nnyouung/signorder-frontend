@@ -69,6 +69,15 @@ class LoadingActivity : AppCompatActivity() {
                 finish()
             }
         }
+
+        WebSocketService.onSignMessageReceived = { message, num ->
+            runOnUiThread {
+                val intent = Intent(this, AnswerActivity::class.java)
+                intent.putExtra("fast_message", message)
+                startActivity(intent)
+                finish()
+            }
+        }
     }
 
     override fun onDestroy() {

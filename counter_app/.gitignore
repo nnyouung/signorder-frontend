@@ -8,7 +8,6 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 /.idea/
-/.vscode/
 .DS_Store
 /build
 /captures
@@ -18,5 +17,3 @@ local.properties
 *.wav
 my-release-key.jks
 keystore.properties
-gradle.properties
-grpc/bin
