@@ -7,8 +7,6 @@ import android.util.Log
 import android.widget.FrameLayout
 
 class HomeActivity : AppCompatActivity() {
-    // TODO: 버튼 클릭 시 색상 변화 기능
-
     private lateinit var signVideo: SignVideo
     private lateinit var inquiryButton: FrameLayout
 

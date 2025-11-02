@@ -14,21 +14,35 @@ class AnswerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_answer)
 
         signVideo = findViewById(R.id.signVideo)
+
         val backButton = findViewById<ImageButton>(R.id.backButton)
         backButton.setOnClickListener{
-            val intent = Intent(this, HomeActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            startActivity(intent)
-            finish()
+            if (!isFinishing) {
+                val intent = Intent(this, HomeActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                startActivity(intent)
+                finish()
+            }
         }
 
         val urls = intent.getStringArrayListExtra("sign_urls")
+        val fastMessage = intent.getStringExtra("fast_message")
         val videoType = intent.getStringExtra("videoType")
 
         when {
             urls != null -> {
                 signVideo.setupWithUrls(urls)
             }
+
+            fastMessage != null -> {
+                when (fastMessage) {
+                    "네" -> signVideo.setup(listOf(R.raw.video13_yes))
+                    "아니요" -> signVideo.setup(listOf(R.raw.video14_no))
+                    "잠시만 기다려주세요" -> signVideo.setup(listOf(R.raw.video15_wait))
+                    "결제해드릴게요" -> signVideo.setup(listOf(R.raw.video16_pay))
+                }
+            }
+
             videoType != null -> {
                 when (videoType) {
                     "restroom" -> signVideo.setup(listOf(R.raw.video10_quickqna_restroom))
@@ -37,5 +51,10 @@ class AnswerActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        WebSocketService.onSignMessageReceived = null
     }
 }
