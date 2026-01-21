@@ -1,4 +1,4 @@
-# 농인을 위한 수어 기반 주문 소통 서비스 <span>$\bf{\large{\color{#458EFD}SignOrder}}$</span> - Frontend Part
+# 농인을 위한 수어 기반 카페 소통 서비스 <span>$\bf{\large{\color{#458EFD}SignOrder}}$</span> - Frontend Part
 ![image](https://github.com/user-attachments/assets/cb441ce8-455f-43d4-8e0f-5398f50f7209)
 
 ##### 작성/담당: 하은영
