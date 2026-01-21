@@ -9,6 +9,12 @@
 
 ## 📋 프로젝트 개요
 본 프로젝트는 수어를 인식하여 카페에서 주문 및 문의를 할 수 있는 수어 기반 카페 주문 서비스입니다.
+<p style="font-size: 1.2em; color: #555; font-weight: bold;">
+    <a href="https://kookmin-sw.github.io/capstone-2025-30/" style="color: #3182F6; text-decoration: none; border-bottom: 2px solid #3182F6;">
+        ✨ 소개 페이지 ✨
+    </a>
+</p>
+
 ### 주요 기능
 - 텍스트가 아닌 수어 아바타 및 이모지 기반 시각적 인터페이스 
 - 카메라 기반 수어 인식 앱으로 실시간 양방향 소통 -> 농인 고객과 카페 관리자의 대화 흐름 완성
@@ -18,6 +24,63 @@
 - menu-web: 농인 고객용 메뉴 주문 웹
 - counter_app: 농인 고객용 수어 인식 문의하기 앱
 - admin-web: 관리자용 메뉴 주문 및 문의 확인 웹
+### 기술스택
+
+| Category                | Technology                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Framework / Library** | ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge\&logo=react\&logoColor=black) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge\&logo=javascript\&logoColor=black) ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge\&logo=flutter\&logoColor=white) ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge\&logo=kotlin\&logoColor=white)   |
+| **Network**             | ![REST API](https://img.shields.io/badge/REST_API-121212?style=for-the-badge\&logo=postman\&logoColor=white) ![gRPC](https://img.shields.io/badge/gRPC-0089D6?style=for-the-badge\&logo=grpc\&logoColor=white) ![WebSocket](https://img.shields.io/badge/WebSocket-4A90E2?style=for-the-badge\&logo=socket.io\&logoColor=white) ![MediaPipe](https://img.shields.io/badge/MediaPipe-0097A7?style=for-the-badge\&logo=google\&logoColor=white) |
+---
+
+## 🎥 소개 영상
+
+https://github.com/user-attachments/assets/a3128bb3-c4f2-4088-b45e-1f0ec0306331
+
+---
+
+## 😎 팀원
+
+<table>
+  <tr align="center">
+    <td width="150">
+      <a href="https://github.com/sangkim99">
+        <img src="https://github.com/sangkim99.png" width="100" /><br />
+        <b>김상민</b>
+      </a>
+    </td>
+    <td width="150">
+      <a href="https://github.com/decollzoq">
+        <img src="https://github.com/decollzoq.png" width="100" /><br />
+        <b>박민선</b>
+      </a>
+    </td>
+    <td width="150">
+      <a href="https://github.com/KooSuYeon">
+        <img src="https://github.com/KooSuYeon.png" width="100" /><br />
+        <b>구수연</b>
+      </a>
+    </td>
+    <td width="150">
+      <a href="https://github.com/nnyouung">
+        <img src="https://github.com/nnyouung.png" width="100" /><br />
+        <b>하은영</b>
+      </a>
+    </td>
+    <td width="150">
+      <a href="https://github.com/ghdyd586">
+        <img src="https://github.com/ghdyd586.png" width="100" /><br />
+        <b>정호용</b>
+      </a>
+    </td>
+  </tr>
+  <tr align="center">
+    <td>팀장<br/>Backend</td>
+    <td>Backend<br/>UI 디자인</td>
+    <td>AI<br/>AI 서버 개발</td>
+    <td>Frontend<br/>UI 디자인</td>
+    <td>아바타 개발</td>
+  </tr>
+</table>
 
 ---
 
@@ -74,19 +137,6 @@ signorder-frontend/
 
 ---
 
-## 🛠 기술 스택  
-### admin-web, menu-web
-- **언어**: JavaScript (ES6+)
-- **프레임워크**: React.js (CRA 기반)
-- **통신 방식**: REST API, WebSocket
-
-### counter_app
-- **언어**: Kotlin (Android)
-- **기술 요소**: MediaPipe (수어 인식)
-- **통신 방식**: gRPC, WebSocket
-
----
-
 ## 🚀 설치 및 실행 방법
 
 ### ✨ 유의사항
@@ -101,3 +151,14 @@ signorder-frontend/
 ### counter_app
 1. Android Studio로 counter_app 폴더 열기
 2. 실제 디바이스 또는 에뮬레이터에서 실행
+
+---
+
+## 📁 소개 자료
+### [중간 발표 자료](https://drive.google.com/file/d/1R-pnw1muGACA_5_bLgEAGD-EcvWx0-XL/view?usp=drive_link )
+### [중간 보고서](https://drive.google.com/file/d/1jetP1r_VG7WsAy0ZcKv1CvQkPUQ2O3gr/view?usp=sharing )
+### [최종 발표 자료](https://www.canva.com/design/DAGnsdKrB-I/ikGDPPJzdcqZCBxnMFkpww/view?utm_content=DAGnsdKrB-I&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h453a9e72fb )
+### [결과 보고서](https://github.com/user-attachments/files/24760280/Sign.Order.Team.30.pdf)
+
+ 
+
